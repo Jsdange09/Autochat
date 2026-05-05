@@ -1,5 +1,19 @@
-FROM python:3.10
+# docker/Dockerfile.backend
+# Installs your friend's dependencies + your MLOps additions
+
+FROM python:3.10-slim
+
 WORKDIR /app
+
+# System deps needed for PyMuPDF + llmware
+RUN apt-get update && apt-get install -y \
+    gcc g++ libgomp1 curl git \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY . .
-RUN pip install -r requirements.txt
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+EXPOSE 8000
+
 CMD ["uvicorn", "backend.api:app", "--host", "0.0.0.0", "--port", "8000"]

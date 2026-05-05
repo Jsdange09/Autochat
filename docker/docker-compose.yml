@@ -1,0 +1,75 @@
+# docker/docker-compose.yml
+# Combined docker-compose for Autochat (your friend) + Aegis MLOps layer (you)
+# Run: docker compose up -d
+
+version: "3.9"
+
+services:
+
+  # ── Your friend's FastAPI backend (with your MLOps layer injected) ──
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../backend/chroma_db:/app/backend/chroma_db
+      - ../backend/logs:/app/backend/logs
+      - ../data:/app/data
+    environment:
+      - CONFIDENCE_THRESHOLD=0.65
+      # 🔑 REPLACE WITH YOUR REAL KEYS:
+      - ARIZE_API_KEY=YOUR_ARIZE_API_KEY_HERE
+      - ARIZE_SPACE_ID=YOUR_ARIZE_SPACE_ID_HERE
+      - WANDB_API_KEY=YOUR_WANDB_API_KEY_HERE
+      - WANDB_PROJECT=aegis-autochat
+    depends_on:
+      - prefect
+    networks:
+      - aegis-net
+
+  # ── Your friend's React frontend ──
+  frontend:
+    build:
+      context: ../frontend/chatbot-ui
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    networks:
+      - aegis-net
+
+  # ── Prefect orchestration server ──
+  prefect:
+    image: prefecthq/prefect:3-latest
+    command: prefect server start --host 0.0.0.0
+    ports:
+      - "4200:4200"
+    networks:
+      - aegis-net
+
+  # ── Prometheus (scrapes /metrics from your friend's API) ──
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - aegis-net
+
+  # ── Grafana (your friend's dashboard; admin/admin) ──
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+    networks:
+      - aegis-net
+
+networks:
+  aegis-net:
+    driver: bridge
