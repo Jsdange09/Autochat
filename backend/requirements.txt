@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+pydantic
+prometheus-client
+llmware
+chromadb
+sentence-transformers
+numpy
+python-dotenv
+prefect
