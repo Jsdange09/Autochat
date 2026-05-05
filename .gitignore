@@ -16,8 +16,6 @@ backend/logs/
 # Prometheus
 prometheus-3.11.3.windows-amd64/
 
-# llmware (DO NOT PUSH THIS)
-llmware/
 
 # OS
 .DS_Store
