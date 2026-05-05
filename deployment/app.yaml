@@ -1,0 +1,28 @@
+# deployment/argocd/app.yaml
+# ArgoCD Application definition for Aegis-Query
+#
+# Apply with:  kubectl apply -f deployment/argocd/app.yaml -n argocd
+#
+# 🔑 REPLACE: repoURL with YOUR actual GitHub repository URL
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: aegis-autochat
+  namespace: argocd
+spec:
+  project: default
+  source:
+    # 🔑 REPLACE THIS with your GitHub repo URL:
+    repoURL: https://github.com/YOUR_USERNAME/Autochat.git
+    targetRevision: HEAD
+    path: deployment/k8s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true     # auto-heals if k8s state drifts from Git
+    syncOptions:
+      - CreateNamespace=true
