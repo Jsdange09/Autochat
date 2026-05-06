@@ -88,3 +88,30 @@ http://localhost:8000/metrics
 
 ## Dashboard
 Grafana → http://localhost:3000
+
+
+
+terminal 1:-
+uvicorn backend.api:app --reload --port 8000
+
+terminal 2:-
+python -m prefect server start
+
+terminal 3:-
+python -m pipelines.flows.ingest_flow
+
+terminal 4:-
+cd frontend/chatbot-ui
+npm install
+npm run dev
+
+terminal 5:-
+$ curl -X POST http://localhost:8000/chat \
+-H "Content-Type: application/json" \
+-d '{"query": "What is machine learning?"}'
+
+
+$ curl http://localhost:8000/system-health
+
+
+$ curl http://localhost:8000/metrics | grep -E "confidence|update_trigger|arize|wandb"

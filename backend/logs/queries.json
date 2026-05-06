@@ -38,5 +38,33 @@
   {
     "query": "complete meaning of ai?",
     "time": 1778018066.9101005
+  },
+  {
+    "query": "what is ai?",
+    "time": 1778025269.6963108
+  },
+  {
+    "query": "provide more accurate result?",
+    "time": 1778025577.4749453
+  },
+  {
+    "query": "what is ai?",
+    "time": 1778025586.824024
+  },
+  {
+    "query": "what is ml?",
+    "time": 1778025728.1920545
+  },
+  {
+    "query": "what is ml?",
+    "time": 1778025744.3342738
+  },
+  {
+    "query": "what is machine learning?",
+    "time": 1778026052.129366
+  },
+  {
+    "query": "explain the higgs boson particle in detail?",
+    "time": 1778026317.1085858
   }
 ]
