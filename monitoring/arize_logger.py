@@ -1,82 +1,103 @@
 """
 monitoring/arize_logger.py
-Your observability layer — plugs into your friend's API.
 
-🔑 PRIVATE DATA NEEDED:
-   ARIZE_API_KEY   → from https://app.arize.com → Settings → API Keys
-   ARIZE_SPACE_ID  → from https://app.arize.com → Settings → Space ID
-   Set these in your .env file.
+BUGS FIXED:
+  [BUG-1] Wrong import: `from arize.api import Client` — this was arize v6/v7 API.
+           arize v8 (installed: 8.22.1) completely removed arize.api.Client.
+           Fix: use `arize.ArizeClient` (new v8 class).
+
+  [BUG-2] Wrong types: `ModelTypes.GENERATIVE_LLM`, `Environments.PRODUCTION`
+           no longer exist in arize v8. The new SDK uses OTEL spans.
+           Fix: use arize v8 spans API for logging LLM interactions.
+
+  [BUG-3] No load_dotenv() — env vars were never populated from .env file.
+           Fix: load_dotenv() is now called in api.py before this module imports.
+           This module just reads os.getenv() normally.
 """
 
 import os
 import datetime
+import json
 from sentence_transformers import SentenceTransformer, util
 
-# ── Arize SDK ──
+# ── Arize v8 SDK ──
 try:
-    from arize.api import Client
-    from arize.utils.types import ModelTypes, Environments
+    from arize.client import ArizeClient
+    from arize.regions import Region
     _arize_available = True
 except ImportError:
     _arize_available = False
-    print("[ARIZE] arize-sdk not installed. Run: pip install arize")
+    print("[ARIZE] arize package not installed. Run: pip install arize")
 
-# ── Shared embedding model (same one your friend uses: all-MiniLM-L6-v2) ──
+# ── Shared embedding model ──
 _embed_model = SentenceTransformer("all-MiniLM-L6-v2")
 
-# ── Arize client (lazy-loaded so missing keys don't crash at import) ──
+# ── Client (lazy-init so missing keys don't crash startup) ──
 _arize_client = None
+
+# ── Local log fallback (works even without Arize keys) ──
+_LOCAL_LOG = "data/arize_local_log.jsonl"
 
 
 def _get_arize_client():
     global _arize_client
-    if _arize_client is None and _arize_available:
-        api_key  = os.getenv("ARIZE_API_KEY", "")
-        space_id = os.getenv("ARIZE_SPACE_ID", "")
-        if api_key and space_id:
-            _arize_client = Client(api_key=api_key, space_id=space_id)
-        else:
-            print("[ARIZE] ⚠️  ARIZE_API_KEY or ARIZE_SPACE_ID not set in .env")
-    return _arize_client
+    if _arize_client is not None:
+        return _arize_client
+
+    if not _arize_available:
+        return None
+
+    api_key = os.getenv("ARIZE_API_KEY", "").strip()
+    if not api_key:
+        print("[ARIZE] ⚠️  ARIZE_API_KEY not set in .env — logging locally only.")
+        return None
+
+    try:
+        _arize_client = ArizeClient(api_key=api_key)
+        print("[ARIZE] ✅ Client initialised (arize v8)")
+        return _arize_client
+    except Exception as e:
+        print(f"[ARIZE] ⚠️  Client init failed: {e}")
+        return None
 
 
 # ──────────────────────────────────────────────────────────────────
-#  REAL CONFIDENCE COMPUTATION
-#  Replaces your friend's `random.uniform(0.3, 0.9)` with a real
-#  embedding-based grounding score.
+#  CONFIDENCE COMPUTATION  (unchanged — this part was correct)
 # ──────────────────────────────────────────────────────────────────
 
 def compute_confidence(query: str, response: str, context: str) -> float:
     """
-    Returns a float [0.0 – 1.0] measuring how well the LLM response
-    is grounded in the retrieved ChromaDB context.
-
-    Formula:
-      score = avg(
-          cosine_sim(query_emb, context_emb),   ← "did we find relevant context?"
-          cosine_sim(response_emb, context_emb) ← "did the answer use the context?"
-      )
-
-    < 0.65  → knowledge gap → triggers repair pipeline
-    ≥ 0.65  → healthy response
+    Real embedding-based grounding score.
+    Returns float [0.0 – 1.0].
+    0.30 returned when no context is available (guaranteed low-confidence signal).
     """
     if not context.strip():
-        # No context retrieved → definitely low confidence
         return 0.30
 
-    q_emb   = _embed_model.encode(query,    convert_to_tensor=True)
-    r_emb   = _embed_model.encode(response, convert_to_tensor=True)
-    c_emb   = _embed_model.encode(context,  convert_to_tensor=True)
+    q_emb = _embed_model.encode(query,    convert_to_tensor=True)
+    r_emb = _embed_model.encode(response, convert_to_tensor=True)
+    c_emb = _embed_model.encode(context,  convert_to_tensor=True)
 
     q_c_sim = float(util.cos_sim(q_emb, c_emb)[0][0])
     r_c_sim = float(util.cos_sim(r_emb, c_emb)[0][0])
 
     score = round((q_c_sim + r_c_sim) / 2, 4)
-    return max(0.0, min(1.0, score))  # clamp to [0, 1]
+    return max(0.0, min(1.0, score))
 
 
 # ──────────────────────────────────────────────────────────────────
-#  ARIZE LOGGING
+#  LOCAL LOG  (always runs — panel can see this even without Arize)
+# ──────────────────────────────────────────────────────────────────
+
+def _log_locally(payload: dict):
+    """Append interaction to a local JSONL file as a fallback."""
+    os.makedirs("data", exist_ok=True)
+    with open(_LOCAL_LOG, "a") as f:
+        f.write(json.dumps(payload) + "\n")
+
+
+# ──────────────────────────────────────────────────────────────────
+#  ARIZE LOGGING  (arize v8 API)
 # ──────────────────────────────────────────────────────────────────
 
 def log_to_arize(
@@ -87,34 +108,47 @@ def log_to_arize(
     latency: float,
 ):
     """
-    Logs one interaction to Arize AI.
-    Arize will surface this in its embedding map and confidence charts.
-    If keys aren't set, silently skips (won't crash your friend's API).
+    Logs one interaction.
+    - Always writes to local JSONL (works without any keys).
+    - Attempts Arize cloud upload if ARIZE_API_KEY is set.
     """
+    threshold    = float(os.getenv("CONFIDENCE_THRESHOLD", "0.65"))
+    is_low       = confidence < threshold
+    payload      = {
+        "prediction_id":  prediction_id,
+        "query":          query,
+        "answer":         answer[:300],
+        "confidence":     round(confidence, 4),
+        "latency_s":      latency,
+        "low_confidence": is_low,
+        "timestamp":      datetime.datetime.utcnow().isoformat(),
+    }
+
+    # Always log locally
+    _log_locally(payload)
+
+    # Try Arize cloud
     client = _get_arize_client()
     if client is None:
-        print(f"[ARIZE] Skipping log (no client). confidence={confidence:.3f}")
+        # Keys missing — local log is enough for demo
+        print(f"[ARIZE] 📝 Logged locally  conf={confidence:.3f}  low={is_low}")
         return
 
     try:
-        client.log(
-            prediction_id=prediction_id,
-            model_id="aegis-autochat",
-            model_version="v1.0",
-            model_type=ModelTypes.GENERATIVE_LLM,
-            environment=Environments.PRODUCTION,
-            prediction_timestamp=datetime.datetime.now(),
-            prediction_label=answer,
-            features={
-                "query":          query,
-                "context_length": len(query),
+        # arize v8: use spans client to log an LLM span
+        client.spans.log(
+            span_name="chat_interaction",
+            attributes={
+                "input.value":      query,
+                "output.value":     answer[:500],
+                "llm.confidence":   str(round(confidence, 4)),
+                "llm.latency_s":    str(latency),
+                "low_confidence":   str(is_low),
+                "prediction_id":    prediction_id,
             },
-            tags={
-                "confidence":    str(round(confidence, 3)),
-                "latency_s":     str(latency),
-                "low_confidence": str(confidence < float(os.getenv("CONFIDENCE_THRESHOLD", "0.65"))),
-            },
+            project_name=os.getenv("ARIZE_PROJECT", "aegis-autochat"),
         )
-        print(f"[ARIZE] ✅ Logged  id={prediction_id[:8]}  confidence={confidence:.3f}")
+        print(f"[ARIZE] ✅ Logged to cloud  id={prediction_id[:8]}  conf={confidence:.3f}")
     except Exception as e:
-        print(f"[ARIZE] ⚠️  Log failed: {e}")
+        # Cloud failed → local log already written, so no data loss
+        print(f"[ARIZE] ⚠️  Cloud log failed (local log saved): {e}")

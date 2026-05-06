@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aegis-Autochat — Complete Project Theory</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+:root {
+  --ink: #0e0f13;
+  --ink2: #1c1e26;
+  --ink3: #262935;
+  --paper: #f5f2ec;
+  --paper2: #ede9e1;
+  --paper3: #e4dfd5;
+  --accent: #c8401a;
+  --accent2: #1a6bc8;
+  --accent3: #1a8c4e;
+  --accent4: #8c1a8c;
+  --gold: #b8860b;
+  --muted: #6b6760;
+  --border: rgba(14,15,19,0.12);
+  --border2: rgba(14,15,19,0.22);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 80px 64px 72px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255,255,255,.03) 39px, rgba(255,255,255,.03) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255,255,255,.03) 39px, rgba(255,255,255,.03) 40px);
+}
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(245,242,236,.45);
+  margin-bottom: 20px;
+  position: relative;
+}
+.hero h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(38px, 5vw, 64px);
+  font-weight: 300;
+  line-height: 1.08;
+  color: var(--paper);
+  position: relative;
+  margin-bottom: 24px;
+}
+.hero h1 em {
+  font-style: italic;
+  color: #e8c080;
+}
+.hero-desc {
+  font-size: 17px;
+  color: rgba(245,242,236,.65);
+  max-width: 620px;
+  position: relative;
+  line-height: 1.7;
+  margin-bottom: 40px;
+}
+.hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  position: relative;
+}
+.hero-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  padding: 5px 12px;
+  border: 1px solid rgba(245,242,236,.2);
+  border-radius: 3px;
+  color: rgba(245,242,236,.6);
+  letter-spacing: .05em;
+}
+
+/* ── LAYOUT ── */
+.wrap { max-width: 980px; margin: 0 auto; padding: 0 40px; }
+.section { padding: 72px 0; border-bottom: 1px solid var(--border); }
+.section:last-child { border-bottom: none; }
+
+/* ── SECTION HEADERS ── */
+.sec-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sec-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 34px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 28px;
+  line-height: 1.15;
+}
+h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+h4 {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+p { margin-bottom: 16px; color: #3a3830; }
+p:last-child { margin-bottom: 0; }
+
+/* ── OVERVIEW CARD ── */
+.overview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--border2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 40px;
+}
+.overview-cell {
+  padding: 28px 32px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.overview-cell:nth-child(even) { border-right: none; }
+.overview-cell:nth-last-child(-n+2) { border-bottom: none; }
+.ov-num {
+  font-family: 'Fraunces', serif;
+  font-size: 48px;
+  font-weight: 300;
+  color: var(--paper3);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.ov-label { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+.ov-desc  { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* ── WHAT IT DOES ── */
+.big-statement {
+  font-family: 'Fraunces', serif;
+  font-size: 26px;
+  font-weight: 300;
+  line-height: 1.4;
+  color: var(--ink);
+  border-left: 3px solid var(--accent);
+  padding-left: 24px;
+  margin: 32px 0;
+}
+.big-statement strong { font-weight: 600; }
+
+/* ── TOOL CARDS ── */
+.tool-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 32px;
+}
+.tool-card {
+  border: 1px solid var(--border2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.tool-header {
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.tool-icon {
+  width: 40px; height: 40px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.tool-name { font-size: 16px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.tool-role {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.tool-body { padding: 18px 22px; }
+.tool-body p { font-size: 13.5px; color: #3a3830; margin-bottom: 10px; }
+.tool-why {
+  background: var(--paper2);
+  border-radius: 4px;
+  padding: 10px 14px;
+  font-size: 12.5px;
+  color: var(--muted);
+  border-left: 2px solid var(--border2);
+  margin-top: 10px;
+  font-style: italic;
+}
+
+/* Category colours */
+.cat-serving  { background:#fff3f0; color:#c8401a; }
+.cat-brain    { background:#f0f5ff; color:#1a6bc8; }
+.cat-monitor  { background:#fff8e6; color:#b8860b; }
+.cat-pipeline { background:#f0fff6; color:#1a8c4e; }
+.cat-storage  { background:#fdf0ff; color:#8c1a8c; }
+.cat-infra    { background:#f0f8ff; color:#1a6bc8; }
+.cat-cicd     { background:#fff0f5; color:#c8401a; }
+.cat-track    { background:#f5f0ff; color:#5c1ac8; }
+.tl-icon-bg-s { background:#fff3f0 }
+.tl-icon-bg-b { background:#f0f5ff }
+.tl-icon-bg-m { background:#fff8e6 }
+.tl-icon-bg-p { background:#f0fff6 }
+.tl-icon-bg-st{ background:#fdf0ff }
+.tl-icon-bg-i { background:#f0f8ff }
+.tl-icon-bg-c { background:#fff0f5 }
+.tl-icon-bg-t { background:#f5f0ff }
+
+/* ── FLOW DIAGRAM ── */
+.flow-wrap {
+  position: relative;
+  margin: 40px 0;
+}
+.flow-step {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 0 20px;
+  margin-bottom: 0;
+  position: relative;
+}
+.flow-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.flow-dot {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  background: var(--paper);
+  z-index: 1;
+  flex-shrink: 0;
+}
+.flow-line {
+  width: 2px;
+  flex: 1;
+  background: var(--border);
+  min-height: 32px;
+}
+.flow-right {
+  padding: 10px 0 36px;
+}
+.flow-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.flow-title {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+.flow-desc {
+  font-size: 14px;
+  color: #4a4740;
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+.flow-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.ft {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 3px;
+  border: 1px solid var(--border2);
+  color: var(--ink2);
+  background: var(--paper2);
+}
+
+/* ── LOOP DIAGRAM ── */
+.loop-box {
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 4px;
+  padding: 40px 48px;
+  margin: 32px 0;
+  position: relative;
+  overflow: hidden;
+}
+.loop-box::before {
+  content: 'THE AUTONOMOUS LOOP';
+  position: absolute;
+  top: 20px; right: 24px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .2em;
+  color: rgba(255,255,255,.2);
+}
+.loop-steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+}
+.ls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 90px;
+  text-align: center;
+}
+.ls-icon {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  background: rgba(255,255,255,.05);
+}
+.ls-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: rgba(255,255,255,.6);
+  letter-spacing: .06em;
+}
+.ls-tool {
+  font-size: 10px;
+  color: rgba(255,255,255,.35);
+}
+.loop-arrow {
+  font-size: 20px;
+  color: rgba(255,255,255,.25);
+  padding: 0 6px;
+  margin-bottom: 24px;
+}
+.loop-note {
+  margin-top: 24px;
+  font-size: 13px;
+  color: rgba(255,255,255,.45);
+  font-style: italic;
+  border-top: 1px solid rgba(255,255,255,.1);
+  padding-top: 16px;
+}
+
+/* ── THEORY BLOCKS ── */
+.theory-block {
+  border: 1px solid var(--border2);
+  border-radius: 2px;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+.theory-header {
+  background: var(--ink2);
+  color: var(--paper);
+  padding: 16px 22px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.theory-emoji { font-size: 18px; }
+.theory-title { font-size: 15px; font-weight: 600; }
+.theory-sub   { font-size: 12px; color: rgba(245,242,236,.5); margin-left: auto; font-family: 'DM Mono', monospace; }
+.theory-body  { padding: 22px 26px; background: var(--paper); }
+.theory-body p { font-size: 14px; }
+
+/* ── COMPARISON TABLE ── */
+table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 20px 0; }
+thead th {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 11px 16px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: .04em;
+}
+tbody td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  color: #3a3830;
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:nth-child(odd) { background: var(--paper2); }
+tbody tr:hover { background: var(--paper3); }
+code {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  background: var(--paper2);
+  padding: 2px 7px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  color: var(--accent);
+}
+
+/* ── CALLOUTS ── */
+.callout {
+  border-radius: 2px;
+  padding: 16px 20px;
+  margin: 20px 0;
+  display: flex;
+  gap: 12px;
+  font-size: 14px;
+}
+.c-red   { background:#fff3f0; border-left:3px solid var(--accent);  color:#5a1a08; }
+.c-blue  { background:#f0f5ff; border-left:3px solid var(--accent2); color:#0a2a5a; }
+.c-green { background:#f0fff6; border-left:3px solid var(--accent3); color:#0a3a20; }
+.c-gold  { background:#fff8e6; border-left:3px solid var(--gold);    color:#4a3000; }
+
+/* ── TIMELINE ── */
+.timeline { margin: 32px 0; }
+.tl-row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 0 24px;
+  margin-bottom: 32px;
+}
+.tl-left {
+  text-align: right;
+  padding-top: 4px;
+}
+.tl-phase {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.tl-time {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--ink);
+}
+.tl-right {
+  border-left: 2px solid var(--border2);
+  padding-left: 24px;
+  padding-bottom: 24px;
+}
+.tl-right h3 { font-size: 17px; margin-bottom: 8px; }
+.tl-right p  { font-size: 13.5px; }
+
+/* ── STACK LAYER VIS ── */
+.stack-vis {
+  border: 1px solid var(--border2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 32px 0;
+}
+.stack-layer {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  border-bottom: 1px solid var(--border);
+}
+.stack-layer:last-child { border-bottom: none; }
+.sl-label {
+  padding: 16px 20px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.sl-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.sl-who {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.sl-content {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.sl-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+hr.divider { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
+
+/* responsive */
+@media(max-width:680px) {
+  .hero { padding: 48px 28px; }
+  .wrap { padding: 0 20px; }
+  .tool-grid { grid-template-columns: 1fr; }
+  .overview-grid { grid-template-columns: 1fr; }
+  .loop-steps { flex-direction: column; align-items: flex-start; }
+  .loop-arrow { transform: rotate(90deg); }
+  .tl-row { grid-template-columns: 1fr; }
+  .tl-left { text-align: left; }
+  .stack-layer { grid-template-columns: 1fr; }
+  .sl-label { border-right: none; border-bottom: 1px solid var(--border); }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<div class="hero">
+  <div class="hero-eyebrow">Project Theory Document · Aegis-Autochat</div>
+  <h1>A <em>Self-Healing</em><br>AI Knowledge System</h1>
+  <p class="hero-desc">
+    Complete theory — what this project is, what every tool does, why it was chosen,
+    how data flows through the system, and the concepts behind each architectural decision.
+  </p>
+  <div class="hero-tags">
+    <span class="hero-tag">RAG Architecture</span>
+    <span class="hero-tag">MLOps</span>
+    <span class="hero-tag">Autonomous Pipelines</span>
+    <span class="hero-tag">Self-Healing Systems</span>
+    <span class="hero-tag">Closed-Loop AI</span>
+    <span class="hero-tag">Observability</span>
+    <span class="hero-tag">Data Versioning</span>
+    <span class="hero-tag">Infrastructure as Code</span>
+    <span class="hero-tag">GitOps CI/CD</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ═══════════════════ SECTION 1: WHAT IS THIS PROJECT ═══════════════════ -->
+<div class="section">
+  <div class="sec-label">Section 01</div>
+  <h2>What Is This Project?</h2>
+
+  <div class="big-statement">
+    Aegis-Autochat is a <strong>self-healing AI chatbot system</strong> — one that doesn't just answer questions, but continuously watches its own performance, detects when it's giving bad answers, and <strong>automatically repairs its knowledge</strong> without anyone pressing a button.
+  </div>
+
+  <p>Most AI chatbots are static. You train them, deploy them, and hope they stay relevant. When the world changes — when new documents arrive, when a topic wasn't covered — the bot silently gives wrong or vague answers. No alarm goes off. No one knows.</p>
+
+  <p>This project solves that problem by adding a complete <strong>autonomous feedback loop</strong> around a standard chatbot. The chatbot (built by one developer) is the brain that answers questions. The MLOps system (your part) is the nervous system that watches, detects, repairs, and deploys — all automatically.</p>
+
+  <div class="overview-grid">
+    <div class="overview-cell">
+      <div class="ov-num">2</div>
+      <div class="ov-label">Developer Split</div>
+      <div class="ov-desc">Friend built the chatbot layer. You built the autonomous intelligence layer around it.</div>
+    </div>
+    <div class="overview-cell">
+      <div class="ov-num">10+</div>
+      <div class="ov-label">Production Tools</div>
+      <div class="ov-desc">FastAPI, llmware, ChromaDB, Prefect, Ray, Delta Lake, Arize AI, W&amp;B, Pulumi, ArgoCD.</div>
+    </div>
+    <div class="overview-cell">
+      <div class="ov-num">0</div>
+      <div class="ov-label">Manual Interventions Needed</div>
+      <div class="ov-desc">Once running, the system detects failures and repairs itself without human input.</div>
+    </div>
+    <div class="overview-cell">
+      <div class="ov-num">∞</div>
+      <div class="ov-label">Self-Improvement Cycles</div>
+      <div class="ov-desc">Every repair makes the system smarter. Knowledge compounds with every run.</div>
+    </div>
+  </div>
+
+  <div class="callout c-gold">
+    <span>💡</span>
+    <span><strong>The key insight:</strong> A chatbot that knows it doesn't know something is far more valuable than one that confidently makes up an answer. This project builds exactly that — a system with self-awareness about its own knowledge gaps.</span>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 2: THE TWO PARTS ═══════════════════ -->
+<div class="section">
+  <div class="sec-label">Section 02</div>
+  <h2>The Two Halves of the System</h2>
+
+  <p>The project is split into two distinct responsibilities. Understanding this division is critical to understanding every tool choice.</p>
+
+  <div class="stack-vis">
+    <div class="stack-layer">
+      <div class="sl-label">
+        <div class="sl-name">Frontend</div>
+        <div class="sl-who">Friend's work</div>
+      </div>
+      <div class="sl-content">
+        <span class="sl-chip" style="background:#f0f5ff;border-color:#c8d8f0;color:#1a4080">⚛️ React + Vite</span>
+        <span style="font-size:13px;color:var(--muted)">Chat UI, "Not Useful" button, confidence badge, health panel</span>
+      </div>
+    </div>
+    <div class="stack-layer">
+      <div class="sl-label">
+        <div class="sl-name">LLM Inference</div>
+        <div class="sl-who">Friend's work</div>
+      </div>
+      <div class="sl-content">
+        <span class="sl-chip" style="background:#fff3f0;border-color:#f0c8c0;color:#802010">🧠 llmware bling-phi-3</span>
+        <span style="font-size:13px;color:var(--muted)">Local language model, runs fully offline, generates answers</span>
+      </div>
+    </div>
+    <div class="stack-layer">
+      <div class="sl-label">
+        <div class="sl-name">Vector Memory</div>
+        <div class="sl-who">Friend's work</div>
+      </div>
+      <div class="sl-content">
+        <span class="sl-chip" style="background:#f0fff6;border-color:#c0e8d0;color:#104030">🗄️ ChromaDB</span>
+        <span style="font-size:13px;color:var(--muted)">Stores embeddings, semantic search for RAG retrieval</span>
+      </div>
+    </div>
+    <div class="stack-layer">
+      <div class="sl-label">
+        <div class="sl-name">API Gateway</div>
+        <div class="sl-who">Merged layer</div>
+      </div>
+      <div class="sl-content">
+        <span class="sl-chip" style="background:#fff8e6;border-color:#e8d890;color:#604000">⚡ FastAPI</span>
+        <span style="font-size:13px;color:var(--muted)">Routes: /chat /feedback /metrics /run-pipeline /system-health — all in one API</span>
+      </div>
+    </div>
+    <div class="stack-layer">
+      <div class="sl-label">
+        <div class="sl-name">Observability</div>
+        <div class="sl-who" style="color:#c8401a">Your work</div>
+      </div>
+      <div class="sl-content">
+        <span class="sl-chip" style="background:#fff8e6;border-color:#e8c890;color:#604820">📡 Arize AI</span>
+        <span class="sl-chip" style="background:#f5f0ff;border-color:#d0c0f0;color:#3a1080">📊 W&amp;B</span>
+        <span class="sl-chip" style="background:#f0f5ff;border-color:#c0d0f0;color:#1a3080">📈 Prometheus+Grafana</span>
+      </div>
+    </div>
+    <div class="stack-layer">
+      <div class="sl-label">
+        <div class="sl-name">Pipeline</div>
+        <div class="sl-who" style="color:#c8401a">Your work</div>
+      </div>
+      <div class="sl-content">
+        <span class="sl-chip" style="background:#f0fff6;border-color:#a0d8c0;color:#103820">🔄 Prefect</span>
+        <span class="sl-chip" style="background:#f0fff6;border-color:#a0d8b0;color:#103820">⚡ Ray</span>
+        <span style="font-size:13px;color:var(--muted)">Orchestrates and parallelises the repair pipeline</span>
+      </div>
+    </div>
+    <div class="stack-layer">
+      <div class="sl-label">
+        <div class="sl-name">Data Versioning</div>
+        <div class="sl-who" style="color:#c8401a">Your work</div>
+      </div>
+      <div class="sl-content">
+        <span class="sl-chip" style="background:#fdf0ff;border-color:#d8b0f0;color:#401060">📦 Delta Lake</span>
+        <span style="font-size:13px;color:var(--muted)">Version-controlled knowledge base with rollback capability</span>
+      </div>
+    </div>
+    <div class="stack-layer">
+      <div class="sl-label">
+        <div class="sl-name">Infrastructure</div>
+        <div class="sl-who" style="color:#c8401a">Your work</div>
+      </div>
+      <div class="sl-content">
+        <span class="sl-chip" style="background:#f0f8ff;border-color:#b0c8e8;color:#102840">☁️ Pulumi</span>
+        <span class="sl-chip" style="background:#fff0f5;border-color:#f0c0d0;color:#501020">🔁 ArgoCD</span>
+        <span style="font-size:13px;color:var(--muted)">Infrastructure as Code + GitOps auto-deployment</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 3: TOOL-BY-TOOL THEORY ═══════════════════ -->
+<div class="section">
+  <div class="sec-label">Section 03</div>
+  <h2>Every Tool — What It Does &amp; Why</h2>
+
+  <div class="tool-grid">
+
+    <!-- FastAPI -->
+    <div class="tool-card">
+      <div class="tool-header">
+        <div class="tool-icon tl-icon-bg-s">⚡</div>
+        <div>
+          <div class="tool-name">FastAPI</div>
+          <div class="tool-role cat-serving">Serving Layer · API Gateway</div>
+        </div>
+      </div>
+      <div class="tool-body">
+        <p><strong>What it is:</strong> A modern Python web framework for building REST APIs. Every HTTP request — from the React frontend, from your curl test, from Prometheus — goes through FastAPI.</p>
+        <p><strong>What it does in this project:</strong> Hosts 5 endpoints. <code>/chat</code> is the main one — it receives a question, calls ChromaDB for context, calls Phi-3 for the answer, runs your confidence scoring, logs to Arize and W&amp;B, and returns the result. All in one function.</p>
+        <div class="tool-why">Why FastAPI over Flask or Django? It's async-native, auto-generates API docs at /docs, has built-in Pydantic validation, and is 2–3× faster than Flask under load — ideal for a project that needs to prove performance.</div>
+      </div>
+    </div>
+
+    <!-- llmware / Phi-3 -->
+    <div class="tool-card">
+      <div class="tool-header">
+        <div class="tool-icon tl-icon-bg-b">🧠</div>
+        <div>
+          <div class="tool-name">llmware + bling-phi-3-gguf</div>
+          <div class="tool-role cat-brain">The Brain · Local LLM</div>
+        </div>
+      </div>
+      <div class="tool-body">
+        <p><strong>What it is:</strong> llmware is a Python library that manages local LLMs. <code>bling-phi-3-gguf</code> is Microsoft's Phi-3 model quantised into GGUF format — a compressed file format that lets large models run on a normal laptop CPU without a GPU.</p>
+        <p><strong>What it does:</strong> Takes a prompt (question + context) and generates a natural language answer. It runs 100% locally — no internet, no API cost, no data leaving the machine.</p>
+        <div class="tool-why">Why local LLM over GPT-4 API? Privacy, zero API cost, offline capability, and proving to the panel that you understand model internals. A local LLM is harder to set up and more impressive than wrapping an API call.</div>
+      </div>
+    </div>
+
+    <!-- ChromaDB -->
+    <div class="tool-card">
+      <div class="tool-header">
+        <div class="tool-icon tl-icon-bg-p">🗄️</div>
+        <div>
+          <div class="tool-name">ChromaDB</div>
+          <div class="tool-role cat-pipeline">Vector Store · Semantic Memory</div>
+        </div>
+      </div>
+      <div class="tool-body">
+        <p><strong>What it is:</strong> A vector database — a database that stores numbers (embeddings) that represent the meaning of text, rather than the text itself.</p>
+        <p><strong>What it does:</strong> When a question comes in, it's converted to a 384-dimensional vector. ChromaDB finds the stored vectors closest to it — those are the most semantically similar past answers or document chunks. This is what makes the chatbot "remember" things.</p>
+        <p><strong>How it works:</strong> Text → SentenceTransformer → float[384] vector → stored. Query → same transform → cosine distance search → top-K results returned as context.</p>
+        <div class="tool-why">Why ChromaDB over Pinecone/Qdrant? Runs fully locally with zero setup, stores to disk automatically (<code>backend/chroma_db/</code>), and has a dead-simple Python API. Perfect for a project demo that needs to work reliably without cloud services.</div>
+      </div>
+    </div>
+
+    <!-- SentenceTransformers -->
+    <div class="tool-card">
+      <div class="tool-header">
+        <div class="tool-icon tl-icon-bg-b">🔢</div>
+        <div>
+          <div class="tool-name">SentenceTransformers</div>
+          <div class="tool-role cat-brain">Embedding Engine · Shared by Both Parts</div>
+        </div>
+      </div>
+      <div class="tool-body">
+        <p><strong>What it is:</strong> A Python library wrapping pre-trained transformer models that convert text into dense numerical vectors that capture semantic meaning.</p>
+        <p><strong>Model used:</strong> <code>all-MiniLM-L6-v2</code> — a 22MB model that produces 384-dimensional embeddings. It's fast, accurate, and runs on CPU.</p>
+        <p><strong>Dual use in this project:</strong> Your friend uses it to embed queries and answers into ChromaDB. <em>You also use it</em> in <code>arize_logger.py</code> to compute the real confidence score by measuring cosine similarity between query, answer, and retrieved context.</p>
+        <div class="tool-why">The same model is used for both storage and evaluation on purpose — if confidence is measured with a different model than storage uses, the scores would be meaningless. Consistency is critical.</div>
+      </div>
+    </div>
+
+    <!-- RAG -->
+    <div class="tool-card" style="grid-column: span 2;">
+      <div class="tool-header">
+        <div class="tool-icon" style="background:#f0f5ff;font-size:22px">🔍</div>
+        <div>
+          <div class="tool-name">RAG — Retrieval Augmented Generation</div>
+          <div class="tool-role cat-brain">Core Architecture Pattern · Not a Tool, a Concept</div>
+        </div>
+      </div>
+      <div class="tool-body">
+        <p><strong>What RAG is:</strong> A design pattern where instead of asking the LLM a question cold, you first retrieve relevant documents from a knowledge base and inject them into the prompt as context. The LLM then answers based on that context rather than just its training data.</p>
+        <p><strong>Why it matters:</strong> LLMs have a fixed knowledge cutoff. They can't know about your company's internal documents, last week's research paper, or anything that happened after training. RAG solves this by providing fresh, specific context at query time.</p>
+        <p><strong>The flow in this project:</strong> Question → embed question → search ChromaDB for top-2 similar chunks → build prompt: "Here is context: [chunks]. Now answer: [question]" → Phi-3 answers using that context → much better answer than asking Phi-3 cold.</p>
+        <div class="tool-why">RAG is why "Not Useful" feedback works: when a user says an answer was bad, the improved answer gets stored in ChromaDB. Next time someone asks a similar question, the improved answer is retrieved as context — the system literally learned from its mistake.</div>
+      </div>
+    </div>
+
+    <!-- Arize AI -->
+    <div class="tool-card">
+      <div class="tool-header">
+        <div class="tool-icon tl-icon-bg-m">📡</div>
+        <div>
+          <div class="tool-name">Arize AI</div>
+          <div class="tool-role cat-monitor">Observability · ML Monitoring</div>
+        </div>
+      </div>
+      <div class="tool-body">
+        <p><strong>What it is:</strong> A cloud platform specifically designed to monitor machine learning models in production. Unlike Grafana (which monitors infrastructure), Arize monitors the <em>quality of AI outputs</em> — drift, hallucinations, confidence distribution.</p>
+        <p><strong>What it does here:</strong> Every single /chat call logs: the query, the answer, the confidence score, latency, and whether it was low-confidence. Arize builds a 3D embedding map showing how different queries cluster — which reveals patterns of where the AI fails.</p>
+        <div class="tool-why">Standard monitoring (Prometheus/Grafana) tells you CPU usage. Arize tells you "40% of questions about Topic X have confidence below 0.5" — which is what you actually need to detect knowledge gaps. This is the difference between infrastructure monitoring and ML observability.</div>
+      </div>
+    </div>
+
+    <!-- Confidence Score -->
+    <div class="tool-card">
+      <div class="tool-header">
+        <div class="tool-icon tl-icon-bg-m">📐</div>
+        <div>
+          <div class="tool-name">Confidence Score</div>
+          <div class="tool-role cat-monitor">Your Core Innovation · Cosine Similarity</div>
+        </div>
+      </div>
+      <div class="tool-body">
+        <p><strong>What it is:</strong> A float between 0 and 1 that measures how well the LLM's answer is grounded in the retrieved context. It is computed using cosine similarity — the angle between two embedding vectors.</p>
+        <p><strong>Formula:</strong></p>
+        <p><code>score = avg( cos_sim(query_emb, context_emb), cos_sim(answer_emb, context_emb) )</code></p>
+        <p><strong>Interpretation:</strong> Score near 1 = answer is strongly grounded in retrieved context. Score near 0 = answer has nothing to do with the context — the model was guessing. Score = 0.30 exactly = no context was retrieved at all (hardcoded floor).</p>
+        <div class="tool-why">This replaced your friend's <code>random.uniform(0.3, 0.9)</code> — a placeholder that made the metric meaningless. Real confidence based on semantic distance is what makes the self-healing loop actually intelligent.</div>
+      </div>
+    </div>
+
+    <!-- Weights & Biases -->
+    <div class="tool-card">
+      <div class="tool-header">
+        <div class="tool-icon tl-icon-bg-t">📊</div>
+        <div>
+          <div class="tool-name">Weights &amp; Biases (W&amp;B)</div>
+          <div class="tool-role cat-track">Experiment Tracking · Scientific Proof</div>
+        </div>
+      </div>
+      <div class="tool-body">
+        <p><strong>What it is:</strong> A platform that logs ML experiments — metrics over time, model configs, hyperparameters — and lets you compare runs visually.</p>
+        <p><strong>What it does here:</strong> Every /chat call logs: confidence score, latency, source (rag vs model), and whether repair was triggered. After a repair pipeline runs, it logs a Table showing before/after confidence improvement.</p>
+        <p><strong>What the panel sees:</strong> A line graph of confidence scores going up after each repair run. A table showing "Before repair: 0.31, After repair: 0.80". This is your scientific proof that the system improves.</p>
+        <div class="tool-why">W&amp;B is used in industry at OpenAI, Hugging Face, and DeepMind to track experiments. Showing it in your project proves you understand production ML workflows, not just toy projects.</div>
+      </div>
+    </div>
+
+    <!-- Prometheus + Grafana -->
+    <div class="tool-card">
+      <div class="tool-header">
+        <div class="tool-icon tl-icon-bg-m">📈</div>
+        <div>
+          <div class="tool-name">Prometheus + Grafana</div>
+          <div class="tool-role cat-monitor">Infrastructure Metrics · Live Dashboard</div>
+        </div>
+      </div>
+      <div class="tool-body">
+        <p><strong>Prometheus:</strong> A time-series metrics database. It scrapes <code>/metrics</code> from FastAPI every 15 seconds and stores values like request count, response time, confidence score, and the update_trigger_flag.</p>
+        <p><strong>Grafana:</strong> A visualization layer that queries Prometheus and renders live graphs. Your dashboard shows all metrics in one view — request rate, confidence over time, repair trigger events, KB version.</p>
+        <p><strong>Key metric — <code>update_trigger_flag</code>:</strong> When this gauge = 1, the Prefect sensor detects it and fires the repair pipeline. This is the bridge between monitoring and action.</p>
+        <div class="tool-why">Prometheus + Grafana is the industry standard for application monitoring, used at Uber, GitLab, and Netflix. Your friend already included it. You extended it with ML-specific gauges (confidence_score, kb_version).</div>
+      </div>
+    </div>
+
+    <!-- Prefect -->
+    <div class="tool-card">
+      <div class="tool-header">
+        <div class="tool-icon tl-icon-bg-p">🔄</div>
+        <div>
+          <div class="tool-name">Prefect</div>
+          <div class="tool-role cat-pipeline">Orchestrator · Workflow Automation</div>
+        </div>
+      </div>
+      <div class="tool-body">
+        <p><strong>What it is:</strong> A Python-native workflow orchestration tool. You define pipelines as <code>@flow</code> functions with <code>@task</code> steps. Prefect handles retry logic, scheduling, logging, and the UI.</p>
+        <p><strong>What it does here:</strong> The <code>ingest_pipeline</code> @flow is the repair pipeline — it loads logs, cleans data, scans for PDFs, runs Ray processing, and updates Delta Lake. The sensor loop polls every 60 seconds and triggers this flow when confidence drops.</p>
+        <p><strong>The UI (localhost:4200)</strong> shows every pipeline run as a graph — nodes light up green as steps complete. This is your "orchestration proof" for the panel.</p>
+        <div class="tool-why">Your friend included Prefect but left the flow as a stub (it did nothing). You upgraded it to a real pipeline that actually processes data. This is the key technical contribution — turning a placeholder into a working system.</div>
+      </div>
+    </div>
+
+    <!-- Ray -->
+    <div class="tool-card">
+      <div class="tool-header">
+        <div class="tool-icon tl-icon-bg-p">⚡</div>
+        <div>
+          <div class="tool-name">Ray</div>
+          <div class="tool-role cat-pipeline">Distributed Processing · Parallelism</div>
+        </div>
+      </div>
+      <div class="tool-body">
+        <p><strong>What it is:</strong> A Python framework for distributed and parallel computing. With <code>@ray.remote</code>, any function can be executed in parallel across all CPU cores.</p>
+        <p><strong>What it does here:</strong> When a PDF is ingested, it's split into ~300-word chunks. Instead of embedding each chunk one at a time (slow, sequential), Ray runs <code>embed_chunk()</code> on all chunks simultaneously across all your CPU cores.</p>
+        <p><strong>Visual proof (localhost:8265):</strong> The Ray dashboard shows CPU utilisation spiking across all cores during processing. Processing 100 chunks takes seconds instead of minutes.</p>
+        <div class="tool-why">A normal for-loop embedding would take 2 minutes for a 50-page PDF. Ray does it in 8 seconds. The dashboard showing all cores at 100% is one of the most visually impressive moments in your demo.</div>
+      </div>
+    </div>
+
+    <!-- Delta Lake -->
+    <div class="tool-card">
+      <div class="tool-header">
+        <div class="tool-icon tl-icon-bg-st">📦</div>
+        <div>
+          <div class="tool-name">Delta Lake</div>
+          <div class="tool-role cat-storage">Data Versioning · Time-Travel Storage</div>
+        </div>
+      </div>
+      <div class="tool-body">
+        <p><strong>What it is:</strong> An open-source storage layer that adds versioning, ACID transactions, and rollback to file-based data storage. Think of it as "Git for your data files."</p>
+        <p><strong>What it does here:</strong> Every time the repair pipeline runs and adds new document chunks to ChromaDB, Delta Lake records it as a new version — with timestamp, operation type, and list of chunk IDs. Version 0 is the initial state. Version 1 is after first repair. And so on.</p>
+        <p><strong>Rollback capability:</strong> If a corrupt PDF was accidentally ingested, you can roll back to the previous version in one command. No data is ever permanently lost.</p>
+        <div class="tool-why">Delta Lake proves to the panel that your system is enterprise-grade. Any production data system must have versioning and rollback. Most student projects skip this — including it immediately elevates your project to a different tier.</div>
+      </div>
+    </div>
+
+    <!-- Pulumi -->
+    <div class="tool-card">
+      <div class="tool-header">
+        <div class="tool-icon tl-icon-bg-i">☁️</div>
+        <div>
+          <div class="tool-name">Pulumi</div>
+          <div class="tool-role cat-infra">Infrastructure as Code · IaC</div>
+        </div>
+      </div>
+      <div class="tool-body">
+        <p><strong>What it is:</strong> A tool that lets you define and manage infrastructure (servers, containers, databases, networks) using regular Python code instead of clicking through dashboards or writing YAML.</p>
+        <p><strong>What it does here:</strong> The <code>infra/__main__.py</code> file defines all Docker containers — ChromaDB, FastAPI, Prefect, Prometheus, Grafana — as Python objects. Running <code>pulumi up</code> creates all of them. Running <code>pulumi destroy</code> removes all of them.</p>
+        <p><strong>Your friend's placeholder:</strong> The original <code>infra/__main__.py</code> just exported the project name — it did nothing. You replaced it with real infrastructure code that provisions the entire system.</p>
+        <div class="tool-why">Infrastructure as Code means your entire deployment is reproducible. Any developer can clone the repo, run pulumi up, and have the identical environment. This is how real engineering teams work.</div>
+      </div>
+    </div>
+
+    <!-- ArgoCD -->
+    <div class="tool-card">
+      <div class="tool-header">
+        <div class="tool-icon tl-icon-bg-c">🔁</div>
+        <div>
+          <div class="tool-name">ArgoCD</div>
+          <div class="tool-role cat-cicd">GitOps · Continuous Deployment</div>
+        </div>
+      </div>
+      <div class="tool-body">
+        <p><strong>What it is:</strong> A Kubernetes-native tool that watches your GitHub repository and automatically deploys any changes to your cluster. This is called "GitOps" — Git is the single source of truth for what should be running.</p>
+        <p><strong>What it does here:</strong> ArgoCD watches your repo. When you push a code change, ArgoCD detects it within 3 minutes and applies the change to the Kubernetes cluster automatically — no <code>kubectl apply</code>, no Jenkins job, no human action required.</p>
+        <p><strong>Self-healing infra:</strong> If someone manually changes something in the cluster (configuration drift), ArgoCD detects the mismatch and reverts it back to what Git says it should be.</p>
+        <div class="tool-why">ArgoCD closes the loop at the infrastructure level — just as Prefect closes the loop at the data level. Together, they mean the entire system manages itself: code, deployment, and data pipelines.</div>
+      </div>
+    </div>
+
+  </div><!-- /tool-grid -->
+</div>
+
+<!-- ═══════════════════ SECTION 4: EXECUTION FLOW ═══════════════════ -->
+<div class="section">
+  <div class="sec-label">Section 04</div>
+  <h2>Ordered Execution Flow — Step by Step</h2>
+
+  <p>This is the exact sequence of events from the moment a user types a question to the moment the system potentially repairs itself. Every step happens in this order, every time.</p>
+
+  <div class="flow-wrap">
+
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-dot" style="background:#fff3f0;border-color:#e8a090;color:#c8401a">01</div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-right">
+        <div class="flow-tag">User Interface</div>
+        <div class="flow-title">User types a question</div>
+        <div class="flow-desc">The React frontend (Vite, port 5173) sends an HTTP POST to <code>/chat</code> with JSON body <code>{"query": "What is machine learning?"}</code>. The question is the only input — everything else is automatic.</div>
+        <div class="flow-tools"><span class="ft">React</span><span class="ft">fetch() POST</span><span class="ft">localhost:8000/chat</span></div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-dot" style="background:#fff8e6;border-color:#e8d090;color:#b8860b">02</div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-right">
+        <div class="flow-tag">FastAPI Gateway</div>
+        <div class="flow-title">Request received, query normalised &amp; logged</div>
+        <div class="flow-desc">FastAPI receives the request. The query is normalised (<code>normalize_query()</code> — strips whitespace, lowercases, adds "?" if missing). Then <code>log_query()</code> appends it to <code>backend/logs/queries.json</code>. This log is what the Prefect pipeline reads as its data source.</div>
+        <div class="flow-tools"><span class="ft">FastAPI</span><span class="ft">normalize_query()</span><span class="ft">backend/logs/queries.json</span></div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-dot" style="background:#f0fff6;border-color:#90d8b0;color:#1a8c4e">03</div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-right">
+        <div class="flow-tag">Vector Store · RAG Step 1</div>
+        <div class="flow-title">Semantic search in ChromaDB</div>
+        <div class="flow-desc"><code>search_memory(query)</code> in <code>vector_store.py</code>: the query is converted to a 384-dim embedding by SentenceTransformer, then ChromaDB searches its stored vectors for the 2 most similar ones using cosine distance. Only results with distance &lt; 0.5 (close enough to be relevant) are returned as context chunks.</div>
+        <div class="flow-tools"><span class="ft">SentenceTransformer</span><span class="ft">ChromaDB.query()</span><span class="ft">cosine distance &lt; 0.5</span></div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-dot" style="background:#f0f5ff;border-color:#90b8e8;color:#1a6bc8">04</div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-right">
+        <div class="flow-tag">LLM Inference · RAG Step 2</div>
+        <div class="flow-title">Phi-3 generates answer</div>
+        <div class="flow-desc">If context was retrieved: a RAG prompt is built — "Here is context: [chunks]. Answer: [question]" — and <code>model.inference(prompt)</code> is called. The LLM generates a grounded answer. If no context was found: the question is sent directly to Phi-3 (model-only mode — higher hallucination risk). The <code>source</code> variable records which path was taken.</div>
+        <div class="flow-tools"><span class="ft">llmware</span><span class="ft">bling-phi-3-gguf</span><span class="ft">source: "rag" or "model"</span></div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-dot" style="background:#fff3f0;border-color:#e89080;color:#c8401a">05</div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-right">
+        <div class="flow-tag">Your Layer · Core Innovation</div>
+        <div class="flow-title">Real confidence score computed</div>
+        <div class="flow-desc"><code>compute_confidence(query, answer, context)</code> in <code>arize_logger.py</code>: all three texts are embedded. Cosine similarity is computed between query↔context and answer↔context. The average is the confidence score. If no context was available, confidence is hardcoded to 0.30. This is the number that drives everything downstream.</div>
+        <div class="flow-tools"><span class="ft">SentenceTransformer</span><span class="ft">util.cos_sim()</span><span class="ft">float [0.0–1.0]</span></div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-dot" style="background:#fff8e6;border-color:#e8d080;color:#b8860b">06</div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-right">
+        <div class="flow-tag">Prometheus Metrics</div>
+        <div class="flow-title">Gauges updated</div>
+        <div class="flow-desc"><code>CONFIDENCE_SCORE.set(confidence)</code> and <code>UPDATE_TRIGGER.set(1 if needs_repair else 0)</code> are updated. Prometheus scrapes these every 15 seconds and Grafana renders them live. The <code>update_trigger_flag</code> is the bridge — when it hits 1, the Prefect sensor can read it and fire the pipeline.</div>
+        <div class="flow-tools"><span class="ft">prometheus_client</span><span class="ft">Gauge.set()</span><span class="ft">localhost:9090</span></div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-dot" style="background:#fdf0ff;border-color:#d090e8;color:#8c1a8c">07</div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-right">
+        <div class="flow-tag">Arize AI · Your Layer</div>
+        <div class="flow-title">Interaction logged to Arize</div>
+        <div class="flow-desc"><code>log_to_arize()</code> sends the query, answer, confidence, latency, and prediction_id to Arize AI's cloud. Arize builds its embedding visualisation using these logs. Each dot in its 3D embedding map represents one conversation. Low-confidence answers cluster away from high-confidence ones — visually proving where knowledge gaps exist.</div>
+        <div class="flow-tools"><span class="ft">arize.client.ArizeClient</span><span class="ft">ARIZE_API_KEY</span><span class="ft">app.arize.com</span></div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-dot" style="background:#f5f0ff;border-color:#c0a0e8;color:#5c1ac8">08</div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-right">
+        <div class="flow-tag">W&amp;B · Your Layer</div>
+        <div class="flow-title">Metrics logged to Weights &amp; Biases</div>
+        <div class="flow-desc"><code>log_metrics()</code> sends confidence, latency, source type, and needs_repair flag to W&amp;B. Every API call is one data point on a time-series graph. Over many queries, you can see confidence trending up or down, repair events causing improvements, and compare prompt versions.</div>
+        <div class="flow-tools"><span class="ft">wandb.log()</span><span class="ft">WANDB_API_KEY</span><span class="ft">wandb.ai</span></div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-dot" style="background:#fff0f5;border-color:#e090b0;color:#c8401a">09</div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-right">
+        <div class="flow-tag">Decision Gate · Your Core Logic</div>
+        <div class="flow-title">Repair needed? Write signal file.</div>
+        <div class="flow-desc"><code>needs_repair = confidence &lt; 0.65 OR age_days &gt; 7</code>. If true, a JSON signal file is written to <code>data/low_confidence_signal.json</code> containing prediction_id, confidence score, query, and timestamp. This file is the trigger that the Prefect sensor monitors. Writing a file (rather than a network call) makes the trigger reliable even if Prefect is temporarily down.</div>
+        <div class="flow-tools"><span class="ft">os.path.exists()</span><span class="ft">json.dump()</span><span class="ft">data/low_confidence_signal.json</span></div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-dot" style="background:#f0fff6;border-color:#80d8a0;color:#1a8c4e">10</div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-right">
+        <div class="flow-tag">Response Returned</div>
+        <div class="flow-title">API returns enriched response to frontend</div>
+        <div class="flow-desc">The /chat endpoint returns JSON with: <code>response</code> (the answer), <code>confidence</code> (0.0–1.0), <code>source</code> ("rag" or "model"), <code>needs_repair</code> (true/false), and <code>prediction_id</code>. The React frontend displays the answer and shows the confidence badge under it — so the user can see how sure the AI was.</div>
+        <div class="flow-tools"><span class="ft">JSON response</span><span class="ft">React renders badge</span><span class="ft">conf: 0.312 · ⚡ repair triggered</span></div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-dot" style="background:#fff8e6;border-color:#e8c060;color:#b8860b">11</div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-right">
+        <div class="flow-tag">Prefect Sensor · Background Process</div>
+        <div class="flow-title">Sensor detects signal, fires repair pipeline</div>
+        <div class="flow-desc">A separate process runs <code>ingest_flow.py</code> as <code>__main__</code>, polling every 60 seconds. It checks: does <code>data/low_confidence_signal.json</code> exist? Does Prometheus show <code>update_trigger_flag = 1</code>? If either is true, it calls <code>ingest_pipeline()</code>. This is entirely asynchronous — the user's chat response was already returned in step 10 without waiting for this.</div>
+        <div class="flow-tools"><span class="ft">Prefect @flow</span><span class="ft">polling loop</span><span class="ft">60s interval</span></div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-dot" style="background:#f0fff6;border-color:#60c890;color:#1a8c4e">12</div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-right">
+        <div class="flow-tag">Ray Processing · Your Layer</div>
+        <div class="flow-title">PDFs processed in parallel across all CPU cores</div>
+        <div class="flow-desc">The pipeline scans <code>data/incoming_docs/</code> for PDFs. For each PDF: PyMuPDF extracts text → text is split into 300-word overlapping chunks → <code>@ray.remote embed_chunk()</code> is called for EVERY chunk simultaneously. Ray distributes these across all CPU cores. <code>ray.get(futures)</code> collects results when all are done. The Ray dashboard shows all cores at 100% — visually proving distributed computing.</div>
+        <div class="flow-tools"><span class="ft">PyMuPDF (fitz)</span><span class="ft">@ray.remote</span><span class="ft">ray.get(futures)</span></div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-dot" style="background:#f0f5ff;border-color:#90b0e0;color:#1a6bc8">13</div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-right">
+        <div class="flow-tag">ChromaDB Update</div>
+        <div class="flow-title">New embeddings upserted into the same knowledge base</div>
+        <div class="flow-desc">Each embedded chunk is upserted into ChromaDB using <code>collection.upsert()</code> — the exact same collection your friend's API reads from. Upsert means: if this chunk ID already exists, update it; if not, add it. This means the knowledge base grows with each repair run without duplicates. The next user query will now find this new content in semantic search.</div>
+        <div class="flow-tools"><span class="ft">collection.upsert()</span><span class="ft">chat_memory collection</span><span class="ft">backend/chroma_db/</span></div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-dot" style="background:#fdf0ff;border-color:#c090d8;color:#8c1a8c">14</div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-right">
+        <div class="flow-tag">Delta Lake · Your Layer</div>
+        <div class="flow-title">New version written to Delta Lake</div>
+        <div class="flow-desc"><code>save_chunks_to_delta(items)</code> writes two things: a version log entry to <code>_delta_log/</code> (JSON with version number, timestamp, chunk count, chunk IDs) and a JSONL data file with all chunk texts and metadata. The version counter increments. Running <code>show_history()</code> now shows Version 0 → Version 1. This is your rollback safety net.</div>
+        <div class="flow-tools"><span class="ft">Delta Lake JSONL</span><span class="ft">_delta_log/</span><span class="ft">version counter</span></div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-dot" style="background:#f5f0ff;border-color:#b090d8;color:#5c1ac8">15</div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-right">
+        <div class="flow-tag">W&amp;B Repair Event</div>
+        <div class="flow-title">Before/after improvement logged as W&amp;B Table</div>
+        <div class="flow-desc"><code>log_repair_event(before_confidence, after_confidence, chunks_added)</code> creates a W&amp;B Table row. The panel can open wandb.ai and see a table showing exactly which repair runs happened, how many chunks were added, and the improvement in confidence. This is the scientific evidence that the system works.</div>
+        <div class="flow-tools"><span class="ft">wandb.Table()</span><span class="ft">repair_events</span><span class="ft">Δconfidence logged</span></div>
+      </div>
+    </div>
+
+    <div class="flow-step">
+      <div class="flow-left">
+        <div class="flow-dot" style="background:#f0fff6;border-color:#60d890;color:#1a8c4e">16</div>
+        <div class="flow-line"></div>
+      </div>
+      <div class="flow-right">
+        <div class="flow-tag">Self-Healing Complete</div>
+        <div class="flow-title">Same question now returns high-confidence answer</div>
+        <div class="flow-desc">The user (or you, in the demo) asks the same question again. ChromaDB now finds the newly ingested chunks. The RAG prompt is built with this real context. Phi-3 gives a grounded answer. <code>compute_confidence()</code> returns a score above 0.65. The badge shows <code>conf: 0.81 · src: rag</code>. No repair is triggered. The system healed itself.</div>
+        <div class="flow-tools"><span class="ft">Full loop complete</span><span class="ft">confidence ≥ 0.65</span><span class="ft">needs_repair: false</span></div>
+      </div>
+    </div>
+
+  </div><!-- /flow-wrap -->
+
+  <!-- AUTONOMOUS LOOP SUMMARY -->
+  <div class="loop-box">
+    <div class="loop-steps">
+      <div class="ls">
+        <div class="ls-icon">💬</div>
+        <div class="ls-name">USER QUERY</div>
+        <div class="ls-tool">React UI</div>
+      </div>
+      <div class="loop-arrow">→</div>
+      <div class="ls">
+        <div class="ls-icon">🧠</div>
+        <div class="ls-name">LLM ANSWER</div>
+        <div class="ls-tool">Phi-3 + RAG</div>
+      </div>
+      <div class="loop-arrow">→</div>
+      <div class="ls">
+        <div class="ls-icon">📐</div>
+        <div class="ls-name">CONFIDENCE</div>
+        <div class="ls-tool">Cosine Sim</div>
+      </div>
+      <div class="loop-arrow">→</div>
+      <div class="ls">
+        <div class="ls-icon">📡</div>
+        <div class="ls-name">OBSERVE</div>
+        <div class="ls-tool">Arize + W&B</div>
+      </div>
+      <div class="loop-arrow">→</div>
+      <div class="ls">
+        <div class="ls-icon">🚨</div>
+        <div class="ls-name">DETECT</div>
+        <div class="ls-tool">Score &lt; 0.65</div>
+      </div>
+      <div class="loop-arrow">→</div>
+      <div class="ls">
+        <div class="ls-icon">🔄</div>
+        <div class="ls-name">TRIGGER</div>
+        <div class="ls-tool">Prefect</div>
+      </div>
+      <div class="loop-arrow">→</div>
+      <div class="ls">
+        <div class="ls-icon">⚡</div>
+        <div class="ls-name">PROCESS</div>
+        <div class="ls-tool">Ray + PDFs</div>
+      </div>
+      <div class="loop-arrow">→</div>
+      <div class="ls">
+        <div class="ls-icon">📦</div>
+        <div class="ls-name">VERSION</div>
+        <div class="ls-tool">Delta Lake</div>
+      </div>
+      <div class="loop-arrow">→</div>
+      <div class="ls">
+        <div class="ls-icon">✅</div>
+        <div class="ls-name">HEALED</div>
+        <div class="ls-tool">Loop Repeats</div>
+      </div>
+    </div>
+    <div class="loop-note">Every step in this loop runs automatically. The only human action required is dropping a PDF into <code>data/incoming_docs/</code>. Everything else — detection, triggering, processing, versioning — is fully autonomous.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 5: THEORETICAL CONCEPTS ═══════════════════ -->
+<div class="section">
+  <div class="sec-label">Section 05</div>
+  <h2>The Theory Behind the Architecture</h2>
+
+  <p>Every design choice in this project maps to a real computer science or ML engineering concept. Here's the theory behind each one.</p>
+
+  <div class="theory-block">
+    <div class="theory-header">
+      <span class="theory-emoji">🔁</span>
+      <span class="theory-title">Closed-Loop Autonomous Learning</span>
+      <span class="theory-sub">Control Systems Theory</span>
+    </div>
+    <div class="theory-body">
+      <p>The entire system is based on <strong>closed-loop control</strong> — a concept from control systems engineering. In an open loop, you give input and hope the output is correct (a standard chatbot). In a closed loop, the output is measured, compared to a desired target, and the difference (error) drives a corrective action.</p>
+      <p>Here: desired output = high confidence answer (≥0.65). Actual output = measured confidence. Error = gap below threshold. Corrective action = ingest new documents. The loop closes when confidence rises above the threshold. This is identical in principle to a thermostat, a PID controller, or any feedback control system.</p>
+    </div>
+  </div>
+
+  <div class="theory-block">
+    <div class="theory-header">
+      <span class="theory-emoji">📐</span>
+      <span class="theory-title">Cosine Similarity as Confidence</span>
+      <span class="theory-sub">Linear Algebra · Vector Space Models</span>
+    </div>
+    <div class="theory-body">
+      <p>Embeddings exist in a high-dimensional vector space (384 dimensions here). In this space, semantically similar texts are close together — their vectors point in similar directions. Cosine similarity measures the angle between two vectors: 1.0 = identical direction (perfectly similar), 0.0 = perpendicular (unrelated), -1.0 = opposite meaning.</p>
+      <p>Confidence is the average of two cosine similarities: how similar the query is to the retrieved context (did we find relevant info?) and how similar the answer is to the context (did the model use what we gave it?). A high score means both questions are answered with yes — the model gave a grounded, relevant response.</p>
+      <p>This is grounded in the <strong>distributional hypothesis</strong> in linguistics: words and texts that occur in similar contexts have similar meanings. This is what all transformer models are trained on.</p>
+    </div>
+  </div>
+
+  <div class="theory-block">
+    <div class="theory-header">
+      <span class="theory-emoji">🗃️</span>
+      <span class="theory-title">Vector Databases and Approximate Nearest Neighbour Search</span>
+      <span class="theory-sub">Information Retrieval · ANN Algorithms</span>
+    </div>
+    <div class="theory-body">
+      <p>ChromaDB doesn't do an exact brute-force search through all stored vectors (that would be O(n) and slow at scale). It uses <strong>Approximate Nearest Neighbour (ANN)</strong> algorithms — specifically HNSW (Hierarchical Navigable Small Worlds) — which organise vectors in a graph structure that allows O(log n) similarity search.</p>
+      <p>The distance threshold of 0.5 in your friend's code is a semantic relevance gate: only vectors within cosine distance 0.5 are considered "relevant enough to use as context." Vectors further away are probably about different topics and would confuse the LLM rather than help it.</p>
+    </div>
+  </div>
+
+  <div class="theory-block">
+    <div class="theory-header">
+      <span class="theory-emoji">⚡</span>
+      <span class="theory-title">Parallel Computing with Ray</span>
+      <span class="theory-sub">Distributed Systems · Task Parallelism</span>
+    </div>
+    <div class="theory-body">
+      <p>Embedding each text chunk requires running it through a neural network (SentenceTransformer). Each call is independent — the result of embedding chunk 1 doesn't affect chunk 2. This is called <strong>embarrassingly parallel</strong> — problems that can be split into completely independent sub-tasks with no communication needed between them.</p>
+      <p>Ray uses Python's <code>@ray.remote</code> decorator to turn a function into a distributed task. <code>embed_chunk.remote()</code> submits the task to Ray's scheduler, which assigns it to a free CPU core. <code>ray.get(futures)</code> blocks until all tasks complete and collects results. With 8 cores and 100 chunks, theoretical speedup is 8× — and in practice it's closer to 6× due to serialisation overhead.</p>
+    </div>
+  </div>
+
+  <div class="theory-block">
+    <div class="theory-header">
+      <span class="theory-emoji">📦</span>
+      <span class="theory-title">Data Versioning and ACID Properties</span>
+      <span class="theory-sub">Database Theory · Lakehouse Architecture</span>
+    </div>
+    <div class="theory-body">
+      <p>Delta Lake brings ACID properties to file-based storage. <strong>A</strong>tomicity: each ingestion either fully completes or is rolled back. <strong>C</strong>onsistency: the version counter is always accurate. <strong>I</strong>solation: concurrent writes don't corrupt each other. <strong>D</strong>urability: once written, data survives crashes.</p>
+      <p>The <code>_delta_log/</code> folder is the transaction log — every operation is recorded as a JSON entry before it's applied. This "write-ahead log" pattern is the same technique used by PostgreSQL and MySQL for crash recovery. Delta Lake adds <strong>time travel</strong> on top: any previous version can be read by specifying its version number, because the log records exactly what changed in each version.</p>
+    </div>
+  </div>
+
+  <div class="theory-block">
+    <div class="theory-header">
+      <span class="theory-emoji">☁️</span>
+      <span class="theory-title">Infrastructure as Code (IaC)</span>
+      <span class="theory-sub">DevOps · Declarative vs Imperative Infra</span>
+    </div>
+    <div class="theory-body">
+      <p>Traditional infrastructure management is <strong>imperative</strong>: you run commands (docker run, kubectl apply) and hope the system ends up in the right state. IaC is <strong>declarative</strong>: you describe the desired state in code, and the tool figures out what commands to run to achieve it.</p>
+      <p>Pulumi takes this a step further by using real programming languages (Python here) instead of DSLs like Terraform's HCL. This means you can use loops, conditionals, functions, and libraries when defining infrastructure — making it far more powerful for complex systems. The <strong>state file</strong> Pulumi maintains tracks what it last deployed, so subsequent <code>pulumi up</code> runs only change what actually changed.</p>
+    </div>
+  </div>
+
+  <div class="theory-block">
+    <div class="theory-header">
+      <span class="theory-emoji">🔁</span>
+      <span class="theory-title">GitOps and Desired State Reconciliation</span>
+      <span class="theory-sub">Site Reliability Engineering · Kubernetes Patterns</span>
+    </div>
+    <div class="theory-body">
+      <p><strong>GitOps</strong> is a philosophy where the Git repository is the single source of truth for what should be running. ArgoCD continuously compares the <strong>desired state</strong> (what's in Git) with the <strong>actual state</strong> (what's running in Kubernetes). When they differ, ArgoCD reconciles — it makes the actual state match the desired state.</p>
+      <p>This solves <strong>configuration drift</strong>: the gradual divergence between what was deployed and what actually runs, caused by manual changes, hotfixes, or ad-hoc patches. With ArgoCD, any manual change is automatically reverted within minutes. The only way to change what runs is to change Git — making every deployment tracked, versioned, and auditable.</p>
+    </div>
+  </div>
+
+  <div class="theory-block">
+    <div class="theory-header">
+      <span class="theory-emoji">📡</span>
+      <span class="theory-title">ML Observability vs Infrastructure Monitoring</span>
+      <span class="theory-sub">MLOps · Production AI Systems</span>
+    </div>
+    <div class="theory-body">
+      <p>Traditional monitoring (Prometheus/Grafana) answers: "Is the server up? How much CPU? What's the latency?" These are <strong>infrastructure metrics</strong>. They tell you the system is running, but not whether it's running <em>well</em> — whether the AI is actually giving good answers.</p>
+      <p><strong>ML observability</strong> answers different questions: "What is the distribution of confidence scores? Are certain types of questions failing more than others? Is model performance drifting over time?" Arize AI is built specifically for these questions. Its embedding visualisation clusters queries in 3D space — topics the model knows well form tight, high-confidence clusters, while knowledge gaps appear as loose, low-confidence outlier regions. This is information you cannot get from any infrastructure metric.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 6: WHAT MAKES IT M.TECH LEVEL ═══════════════════ -->
+<div class="section">
+  <div class="sec-label">Section 06</div>
+  <h2>Why This Is a Research-Grade Project</h2>
+
+  <div class="callout c-green">
+    <span>🎓</span>
+    <span>This project covers every category in the MLOps maturity model — from raw model serving all the way to autonomous self-management. Most industry deployments don't reach this level of automation.</span>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>MLOps Category</th>
+        <th>What a Basic Project Does</th>
+        <th>What This Project Does</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Model Serving</strong></td>
+        <td>Returns a string from an LLM API call</td>
+        <td>Local LLM + RAG + confidence scoring + source attribution</td>
+      </tr>
+      <tr>
+        <td><strong>Monitoring</strong></td>
+        <td>Print statements or no monitoring</td>
+        <td>Prometheus (infra) + Arize AI (ML quality) + Grafana dashboard</td>
+      </tr>
+      <tr>
+        <td><strong>Data Pipeline</strong></td>
+        <td>A script that runs manually</td>
+        <td>Prefect @flow with autonomous sensor trigger + Ray parallelism</td>
+      </tr>
+      <tr>
+        <td><strong>Data Versioning</strong></td>
+        <td>No versioning / files overwritten</td>
+        <td>Delta Lake with full transaction log + rollback capability</td>
+      </tr>
+      <tr>
+        <td><strong>Experiment Tracking</strong></td>
+        <td>print("accuracy:", acc)</td>
+        <td>W&amp;B with time-series graphs, config logging, repair event tables</td>
+      </tr>
+      <tr>
+        <td><strong>Infrastructure</strong></td>
+        <td>Manual docker run commands in a README</td>
+        <td>Pulumi IaC — entire stack deployable with one command</td>
+      </tr>
+      <tr>
+        <td><strong>CI/CD</strong></td>
+        <td>Manual deployment after each code change</td>
+        <td>ArgoCD GitOps — push to GitHub → auto-deploys, no human action</td>
+      </tr>
+      <tr>
+        <td><strong>Self-Healing</strong></td>
+        <td>Not present in any basic project</td>
+        <td>Full autonomous closed-loop: detect → trigger → repair → verify</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="big-statement" style="margin-top:36px">
+    The innovation isn't any single tool. It's the <strong>closed feedback loop</strong> connecting all of them — where monitoring drives orchestration, orchestration drives processing, processing drives storage, and storage improves the model's answers. <strong>No human is in the loop.</strong>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 7: ONE-LINE SUMMARY PER TOOL ═══════════════════ -->
+<div class="section">
+  <div class="sec-label">Section 07</div>
+  <h2>Quick Reference — Every Tool in One Line</h2>
+
+  <table>
+    <thead>
+      <tr><th>Tool</th><th>Category</th><th>One-Line Summary</th><th>Without It</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>React + Vite</strong></td><td>Frontend</td><td>The chat interface the user sees and types into</td><td>No UI — API only</td></tr>
+      <tr><td><strong>FastAPI</strong></td><td>API Gateway</td><td>The HTTP server that wires every component together</td><td>No entry point</td></tr>
+      <tr><td><strong>llmware / Phi-3</strong></td><td>LLM</td><td>The language model that generates natural language answers, locally</td><td>No AI answers</td></tr>
+      <tr><td><strong>SentenceTransformer</strong></td><td>Embedding</td><td>Converts text to 384-dim vectors for storage and comparison</td><td>No semantic search, no confidence</td></tr>
+      <tr><td><strong>ChromaDB</strong></td><td>Vector Store</td><td>The semantic memory — stores and searches embeddings</td><td>No RAG, only cold LLM calls</td></tr>
+      <tr><td><strong>Cosine Similarity</strong></td><td>Confidence</td><td>Measures how grounded the answer is in the retrieved context</td><td>No real confidence signal</td></tr>
+      <tr><td><strong>Prometheus</strong></td><td>Metrics</td><td>Scrapes and stores time-series infrastructure + ML metrics</td><td>No metrics history</td></tr>
+      <tr><td><strong>Grafana</strong></td><td>Visualization</td><td>Live dashboard rendering Prometheus metrics as graphs</td><td>Metrics exist but invisible</td></tr>
+      <tr><td><strong>Arize AI</strong></td><td>ML Observability</td><td>Tracks AI-specific quality — confidence, drift, embedding maps</td><td>No ML-level observability</td></tr>
+      <tr><td><strong>Weights &amp; Biases</strong></td><td>Experiment Tracking</td><td>Logs every interaction as an experiment data point with history</td><td>No before/after proof of improvement</td></tr>
+      <tr><td><strong>Prefect</strong></td><td>Orchestration</td><td>Manages pipeline execution order, retry, logging, UI visualisation</td><td>Pipeline runs but unmanaged</td></tr>
+      <tr><td><strong>Ray</strong></td><td>Distributed Compute</td><td>Parallelises PDF embedding across all CPU cores</td><td>Sequential ingestion, 10× slower</td></tr>
+      <tr><td><strong>PyMuPDF</strong></td><td>Document Parsing</td><td>Extracts raw text from PDF files</td><td>Can't read PDFs</td></tr>
+      <tr><td><strong>Delta Lake</strong></td><td>Data Versioning</td><td>Adds version history and rollback to the knowledge base</td><td>No audit trail, no recovery from bad data</td></tr>
+      <tr><td><strong>python-dotenv</strong></td><td>Config</td><td>Loads API keys from <code>.env</code> file into os.environ at startup</td><td>All external services break (the original bug)</td></tr>
+      <tr><td><strong>Pulumi</strong></td><td>Infrastructure</td><td>Provisions all Docker containers from Python code</td><td>Manual setup, not reproducible</td></tr>
+      <tr><td><strong>ArgoCD</strong></td><td>CI/CD</td><td>Watches GitHub and auto-deploys any code changes to Kubernetes</td><td>Manual deployment after every change</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</div><!-- /wrap -->
+
+<div style="background:var(--ink);color:rgba(245,242,236,.4);padding:32px 64px;text-align:center;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em">
+  AEGIS-AUTOCHAT · COMPLETE PROJECT THEORY · SELF-HEALING AI SYSTEM
+</div>
+
+</body>
+</html>

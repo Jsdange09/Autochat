@@ -1,5 +1,4 @@
-# requirements.txt
-# ── Your friend's original packages ──
+# ── Friend's original packages ──
 fastapi
 uvicorn[standard]
 pydantic
@@ -12,21 +11,13 @@ httpx
 
 # ── Your MLOps additions ──
 ray[default]>=2.20.0
-PyMuPDF           # fitz — PDF reading for Ray pipeline
-python-dotenv     # .env file loading
+PyMuPDF
+# [FIX] python-dotenv was listed but NOT imported in api.py — now fixed
+python-dotenv>=1.0.0
 
-# Arize AI observability
-# 🔑 Needs ARIZE_API_KEY + ARIZE_SPACE_ID in .env
-arize-sdk
+# Arize AI — PINNED to 7.x (v8 broke the logging API we use)
+# [FIX] arize==8.x removed arize.api.Client entirely
+arize>=7.0.0,<8.0.0
 
-# Weights & Biases experiment tracking
-# 🔑 Needs WANDB_API_KEY in .env
-wandb
-
-# Pulumi infrastructure (run separately from infra/ folder)
-# pulumi
-# pulumi-docker
-
-# Optional: for real Delta Lake (requires Java 11+)
-# delta-spark
-# pyspark
+# Weights & Biases
+wandb>=0.17.0
