@@ -1,0 +1,152 @@
+# ----------------------------
+# 🔐 ENV & SECRETS
+# ----------------------------
+.env
+.env.*
+*.env
+!.env.example
+
+# ----------------------------
+# 🐍 PYTHON
+# ----------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.env/
+.venv/
+
+# ----------------------------
+# 🧠 MODEL FILES (LLMWARE)
+# ----------------------------
+*.gguf
+*.bin
+*.pt
+*.pth
+*.onnx
+models/
+.llmware/
+
+# ----------------------------
+# 🧾 LOGS
+# ----------------------------
+*.log
+logs/
+backend/logs/
+
+# ----------------------------
+# 🧠 VECTOR DB (Chroma)
+# ----------------------------
+chroma_db/
+backend/chroma_db/
+*.sqlite3
+*.db
+
+# ----------------------------
+# 📊 DATA PIPELINE (YOUR LAYER)
+# ----------------------------
+data/incoming_docs/*
+!data/incoming_docs/.gitkeep
+
+data/delta_tables/
+*.parquet
+
+# Delta Lake metadata
+_delta_log/
+
+# ----------------------------
+# ⚡ RAY
+# ----------------------------
+ray_results/
+tmp_ray/
+*.ray/
+
+# ----------------------------
+# 📦 PREFECT
+# ----------------------------
+.prefect/
+.prefectignore
+prefect.db
+
+# ----------------------------
+# 📊 WANDB
+# ----------------------------
+wandb/
+wandb/run-*
+wandb/latest-run
+
+# ----------------------------
+# 📊 ARIZE (cache/logs)
+# ----------------------------
+.arize/
+
+# ----------------------------
+# 🐳 DOCKER
+# ----------------------------
+docker-data/
+*.pid
+*.sock
+
+# ----------------------------
+# ☸️ KUBERNETES / ARGOCD
+# ----------------------------
+*.kubeconfig
+.kube/
+minikube/
+
+# ----------------------------
+# 🧱 PULUMI
+# ----------------------------
+Pulumi.*.yaml
+Pulumi.*.json
+.pulumi/
+pulumi.log
+
+# ----------------------------
+# 🌐 FRONTEND (React/Vite)
+# ----------------------------
+frontend/chatbot-ui/node_modules/
+frontend/chatbot-ui/dist/
+frontend/chatbot-ui/.vite/
+
+# ----------------------------
+# 🧪 TEST / CACHE
+# ----------------------------
+.cache/
+pytest_cache/
+coverage/
+
+# ----------------------------
+# 🖥️ OS FILES
+# ----------------------------
+.DS_Store
+Thumbs.db
+
+# ----------------------------
+# 🧑‍💻 IDE / EDITOR
+# ----------------------------
+.vscode/
+.idea/
+
+# ----------------------------
+# 🔄 TEMP FILES
+# ----------------------------
+*.tmp
+*.temp
+*.swp
+*~
+
+# ----------------------------
+# 📦 PACKAGE LOCK FILES (optional)
+# ----------------------------
+# Uncomment if needed
+# package-lock.json
+# yarn.lock

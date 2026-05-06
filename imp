@@ -90,6 +90,10 @@ http://localhost:8000/metrics
 Grafana → http://localhost:3000
 
 
+in each terminal first :-  cd Autochat
+
+venv powershell:- .\venv\Scripts\Activate.ps1
+venv bash:- source venv/Scripts/activate
 
 terminal 1:-
 uvicorn backend.api:app --reload --port 8000
