@@ -14,7 +14,7 @@ spec:
   project: default
   source:
     # 🔑 REPLACE THIS with your GitHub repo URL:
-    repoURL: https://github.com/YOUR_USERNAME/Autochat.git
+    repoURL: https://github.com/Jsdange09/Autochat.git
     targetRevision: HEAD
     path: deployment/k8s
   destination:

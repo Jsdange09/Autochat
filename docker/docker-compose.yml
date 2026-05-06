@@ -20,9 +20,9 @@ services:
     environment:
       - CONFIDENCE_THRESHOLD=0.65
       # 🔑 REPLACE WITH YOUR REAL KEYS:
-      - ARIZE_API_KEY=YOUR_ARIZE_API_KEY_HERE
-      - ARIZE_SPACE_ID=YOUR_ARIZE_SPACE_ID_HERE
-      - WANDB_API_KEY=YOUR_WANDB_API_KEY_HERE
+      - ARIZE_API_KEY=ak-d2881775-a106-4e6b-a2f7-952df67e846d-16HwDiHVbGXC3p8GfOUSoZbEe9yReG2C
+      - ARIZE_SPACE_ID=U3BhY2U6NDM4NDM6Yy9NVg==
+      - WANDB_API_KEY=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
       - WANDB_PROJECT=aegis-autochat
     depends_on:
       - prefect
